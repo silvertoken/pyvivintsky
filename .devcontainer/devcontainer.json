@@ -1,0 +1,33 @@
+{
+	"name": "Python 3",
+	"context": "..",
+	"dockerFile": "Dockerfile",
+	"runArgs": [
+		"-e",
+		"GIT_EDITOR=code --wait",
+		"-u",
+		"1000"
+	],
+	"settings": {
+		"python.pythonPath": "/usr/local/bin/python",
+		"python.linting.pylintEnabled": true,
+		"python.linting.enabled": true,
+		"python.formatting.provider": "black",
+		"editor.formatOnPaste": false,
+		"editor.formatOnSave": true,
+		"editor.formatOnType": true,
+		"files.trimTrailingWhitespace": true,
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"python.linting.pylintPath": "/usr/local/bin/pylint"
+	},
+	// Install dependencies
+	"postCreateCommand": "pip install -r requirements.txt",
+	// Add the IDs of extensions you want installed when the container is created in the array below.
+	"extensions": [
+		"ms-python.python",
+		"visualstudioexptteam.vscodeintellicode",
+		"ms-azure-devops.azure-pipelines",
+		"redhat.vscode-yaml",
+		"esbenp.prettier-vscode"
+	]
+}
