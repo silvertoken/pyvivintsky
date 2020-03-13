@@ -1,7 +1,7 @@
 import setuptools
 
-NAME = "pyVivintAPI"
-PACKAGE_NAME = "pyvivintapi"
+NAME = "pyVivintSky"
+PACKAGE_NAME = "pyvivintsky"
 VERSION = "0.0.1"
 
 with open("README.md", "r") as fh:
@@ -15,7 +15,7 @@ setuptools.setup(
     description="Python library for interacting with Vivint Sky API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/silvertoken/pyvivintapi",
+    url="https://github.com/silvertoken/pyvivintsky",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
