@@ -22,10 +22,10 @@ class VivintAPI:
         if not response.ok:
             response.raise_for_status()
         self.__sessionId = response.cookies["s"]
-        return response.json()
+        return True
 
-    def getSystemInfo(self, panelId) -> dict:
-        """Returns the the system info from the Vivint API."""
+    def getSystemInfo(self, panelId):
+        """Returns the system info from the Vivint API."""
         if self.__sessionId == None:
             raise NameError(
                 "You must login to the API first by calling the login method"
@@ -41,9 +41,31 @@ class VivintAPI:
             if login():
                 cookie = dict(s=self.__sessionId)
                 response = requests.get(
-                    url=VIVENT_API_ENDPOINT + "systems/" + panelId, cookies=cookie,
+                    url=VIVENT_API_ENDPOINT + "systems/" + panelId, cookies=cookie
                 )
 
+        if not response.ok:
+            response.raise_for_status()
+
+        return response.json()
+
+    def getAuthorizedUser(self):
+        """Retuns the authorized user data from the Vivint API."""
+        if self.__sessionId == None:
+            raise NameError(
+                "You must login to the API first by calling the login method"
+            )
+
+        cookie = dict(s=self.__sessionId)
+        response = requests.get(url=VIVENT_API_ENDPOINT + "authuser", cookies=cookie)
+
+        """Check for session timeout and relogin"""
+        if response.status_code == 401:
+            if login():
+                cookie = dict(s=self.__sessionId)
+                response = requests.get(
+                    url=VIVENT_API_ENDPOINT + "authuser", cookies=cookie
+                )
         if not response.ok:
             response.raise_for_status()
 
