@@ -6,26 +6,32 @@ class VivintDevice(object):
     DEVICE_TYPE_TOUCH_PANEL = "primary_touch_link_device"
     DEVICE_TYPE_WIRELESS_SENSOR = "wireless_sensor"
 
-    def __init__(self, json, root):
-        self.__json = json
+    def __init__(self, device, root):
+        self.__device = device
         self.__root = root
 
-    def getRoot(self):
+    def get_root(self):
         """ Return the root device this is attached too."""
         return self.__root
 
-    def getJson(self):
+    def get_device(self):
         """ Returns the json dictionary data from the initial request."""
-        return self.__json
+        return self.__device
 
     def id(self):
-        return self.__json[u"_id"]
+        return self.__device[u"_id"]
 
     def name(self):
-        return self.__json[u"n"]
+        if u"n" in self.__device.keys():
+            return self.__device[u"n"]
+        else:
+            return ""
 
-    def deviceType(self):
-        return self.__json[u"t"]
+    def device_type(self):
+        return self.__device[u"t"]
 
-    def updateJson(self, json):
-        self.__json = json
+    def set_device(self, device):
+        self.__device = device
+
+    def update_device(self, updates):
+        self.__device.update(updates)

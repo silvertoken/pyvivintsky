@@ -14,60 +14,72 @@ class VivintPanel(VivintDevice):
     def __init__(self, vivintapi, descriptor):
         self.__vivintapi: VivintAPI = vivintapi
         self.__descriptor = descriptor
-        self.__system = self.__get_system()
-        self.__childDevices = []
+        self.__panel = self.__init_panel()
+        self.__child_devices = self.__init_devices()
 
-    def __get_system(self):
-        return self.__vivintapi.getSystemInfo(str(self.__descriptor[u"panid"]))
+    def __init_panel(self):
+        return self.__vivintapi.get_system_info(str(self.__descriptor[u"panid"]))
+
+    def __init_devices(self):
+        """
+        Initialize the devices
+        """
+        devices = [
+            self.get_device_class(device[u"t"])(device, self)
+            for device in self.__panel[u"system"][u"par"][0][u"d"]
+        ]
+
+        return devices
 
     def id(self):
-        return self.__system[u"system"][u"panid"]
+        return str(self.__panel[u"system"][u"panid"])
 
-    def getArmedState(self):
+    def get_armed_state(self):
         """Return panels armed state."""
         return self.ARM_STATES[self.__descriptor[u"par"][0][u"s"]]
 
     def street(self):
         """Return the panels street address."""
-        return self.__system[u"system"][u"add"]
+        return self.__panel[u"system"][u"add"]
 
-    def zipCode(self):
+    def zip_code(self):
         """Return the panels zip code."""
-        return self.__system[u"system"][u"poc"]
+        return self.__panel[u"system"][u"poc"]
 
     def city(self):
         """Return the panels city."""
-        return self.__system[u"system"][u"cit"]
+        return self.__panel[u"system"][u"cit"]
 
-    def climateState(self):
+    def climate_state(self):
         """Return the climate state"""
-        return self.__system[u"system"][u"csce"]
+        return self.__panel[u"system"][u"csce"]
 
-    def pollDevices(self):
+    def poll_devices(self):
         """
         Poll all devices attached to this panel.
         """
-        self.__system = self.__get_system()
-        deviceDict = dict(
-            [(d[u"_id"], d) for d in self.__system[u"system"][u"par"][0][u"d"]]
+        self.__panel = self.__init_panel()
+        device_dict = dict(
+            [(d[u"_id"], d) for d in self.__panel[u"system"][u"par"][0][u"d"]]
         )
-        for device in self.__childDevices:
-            device.updateJson(deviceDict[device.id()])
+        for device in self.__child_devices:
+            device.set_device(device_dict[device.id()])
 
-    def getDevices(self):
+    def get_devices(self):
         """
-        Return a list of all devices
+        Returns the current list of devices attached to the panel.
         """
-        devices = [
-            self.getDeviceClass(device[u"t"])(device, self)
-            for device in self.__system[u"system"][u"par"][0][u"d"]
-        ]
+        return self.__child_devices
 
-        self.__childDevices = devices
-        return self.__childDevices
+    def handle_message(self, message):
+        if u"d" in message[u"da"].keys():
+            for msg_device in message[u"da"][u"d"]:
+                for device in self.__child_devices:
+                    if device.id() == msg_device[u"_id"]:
+                        device.update_device(msg_device)
 
     @staticmethod
-    def getDeviceClass(typeString):
+    def get_device_class(type_string):
         mapping = {VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor}
-        return mapping.get(typeString, VivintUnknownDevice)
+        return mapping.get(type_string, VivintUnknownDevice)
 

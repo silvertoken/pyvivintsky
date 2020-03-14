@@ -1,2 +1,4 @@
 black
 requests
+apscheduler
+pubnub
