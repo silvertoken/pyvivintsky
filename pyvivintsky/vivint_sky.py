@@ -25,7 +25,3 @@ class VivintSky:
             for panel in self.__authData[u"u"][u"system"]
         ]
 
-    def getPanelInfo(self, panelId):
-        """Return the JSON data for the system"""
-        return self.__vivintApi.getSystemInfo(panelId)
-
