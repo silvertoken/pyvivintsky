@@ -57,10 +57,10 @@ class VivintSky:
         """
         Initialize the panels from the Vivint Panel class.
         """
-        return [
-            VivintPanel(self.__vivint_api, panel)
-            for panel in self.__auth_data[u"u"][u"system"]
-        ]
+        panels = {}
+        for panel in self.__auth_data[u"u"][u"system"]:
+            panels[str(panel[u"panid"])] = VivintPanel(self.__vivint_api, panel)
+        return panels
 
     def __init_pubnub(self):
         """
@@ -75,9 +75,7 @@ class VivintSky:
 
     def __handle_pubnub_message(self, message):
         if u"da" in message.keys():
-            for p in self.__panels:
-                if p.id() == str(message[u"panid"]):
-                    p.handle_message(message)
+            self.__panels[str(message[u"panid"])].handle_message(message)
 
     def __handle_pubnub_connected(self):
         print("Connected to PubNub channel")
@@ -89,6 +87,9 @@ class VivintSky:
 
     def get_panels(self):
         return self.__panels
+
+    def get_panel(self, id):
+        return self.__panels[id]
 
     def disconnect(self):
         """

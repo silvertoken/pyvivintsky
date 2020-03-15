@@ -51,7 +51,7 @@ class VivintPubNubCallback(SubscribeCallback):
                 It insteads fires and acknowledgement category
                 """
                 if status.operation == PNOperationType.PNUnsubscribeOperation:
-                    print(status.is_error())
+                    # print(status.is_error())
                     self.__disconnected()
             else:
                 print("Category: " + str(status.category))
@@ -74,18 +74,18 @@ class VivintPubNubCallback(SubscribeCallback):
             # Encountered unknown status type
 
     def presence(self, pubnub, presence):
-        print("Presence Event!")
-        print(presence)
+        # print("Presence Event!")
+        # print(presence)
         pass  # handle incoming presence data
 
     def message(self, pubnub, message):
         # handle incoming messages
-        print("message")
-        print(message.message)
+        # print("message")
+        # print(message.message)
         self.__handler(message.message)
 
     def signal(self, pubnub, signal):
-        print("signal")
-        print(signal.message)
+        # print("signal")
+        # print(signal.message)
         pass  # handle incoming signals
 

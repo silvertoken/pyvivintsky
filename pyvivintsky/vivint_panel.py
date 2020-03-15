@@ -24,11 +24,11 @@ class VivintPanel(VivintDevice):
         """
         Initialize the devices
         """
-        devices = [
-            self.get_device_class(device[u"t"])(device, self)
-            for device in self.__panel[u"system"][u"par"][0][u"d"]
-        ]
-
+        devices = {}
+        for device in self.__panel[u"system"][u"par"][0][u"d"]:
+            devices[str(device[u"_id"])] = self.get_device_class(device[u"t"])(
+                device, self
+            )
         return devices
 
     def id(self):
@@ -59,11 +59,6 @@ class VivintPanel(VivintDevice):
         Poll all devices attached to this panel.
         """
         self.__panel = self.__init_panel()
-        device_dict = dict(
-            [(d[u"_id"], d) for d in self.__panel[u"system"][u"par"][0][u"d"]]
-        )
-        for device in self.__child_devices:
-            device.set_device(device_dict[device.id()])
 
     def get_devices(self):
         """
@@ -71,12 +66,16 @@ class VivintPanel(VivintDevice):
         """
         return self.__child_devices
 
+    def get_device(self, id):
+        return self.__child_devices[id]
+
+    def update_device(self, id, updates):
+        self.__child_devices[id].update_device(updates)
+
     def handle_message(self, message):
         if u"d" in message[u"da"].keys():
             for msg_device in message[u"da"][u"d"]:
-                for device in self.__child_devices:
-                    if device.id() == msg_device[u"_id"]:
-                        device.update_device(msg_device)
+                self.update_device(str(msg_device[u"_id"]), msg_device)
 
     @staticmethod
     def get_device_class(type_string):
