@@ -1,10 +1,7 @@
 import requests
 import json
-import logging
 
 VIVENT_API_ENDPOINT = "https://www.vivintsky.com/api/"
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class VivintAPI:

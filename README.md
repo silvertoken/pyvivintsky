@@ -7,7 +7,7 @@ After looking over the internet I was able to find a few pieces of information a
 a Vivint employee which I have no reason to doubt and honestly his work would require some type of inside knowledge to the API.
 
 My intent here was to combine all the work that has been done over the last couple of years and combine them into a working library so I can add an integration to the
-Home Automation SysteM called Home Assistant (https://www.home-assistant.io/).
+Home Automation System called Home Assistant (https://www.home-assistant.io/).
 
 ## Credit
 

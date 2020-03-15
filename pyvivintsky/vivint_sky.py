@@ -18,6 +18,14 @@ class VivintSky:
         self.__refresh_period = refresh
         self.__refresh_scheduler = None
         self.__pubnub: PubNub = None
+        self.__pubnub_listener = VivintPubNubCallback(
+            self.__handle_pubnub_message,
+            self.__handle_pubnub_connected,
+            self.__handle_pubnub_disconnected,
+        )
+        self.__pubnub_config = PNConfiguration()
+        self.__pubnub_config.ssl = True
+        self.__pubnub_config.subscribe_key = VIVINT_SUB_KEY
 
     def __refresh_session(self):
         if self.__vivint_api.login():
@@ -33,8 +41,9 @@ class VivintSky:
         if self.__refresh_scheduler == None:
             self.__refresh_scheduler = BackgroundScheduler()
         else:
-            self.__refresh_scheduler.shutdown()
-            self.__refresh_period.remove_all_jobs()
+            if self.__refresh_scheduler.running:
+                self.__refresh_scheduler.shutdown()
+            self.__refresh_scheduler.remove_all_jobs()
 
         self.__refresh_scheduler.add_job(
             self.__refresh_session, "interval", seconds=self.__refresh_period
@@ -57,20 +66,34 @@ class VivintSky:
         """
         Initialize and subscribe to PubNub
         """
-        pub_config = PNConfiguration()
-        pub_config.subscribe_key = VIVINT_SUB_KEY
-        self.__pubnub = PubNub(pub_config)
-        self.__pubnub.add_listener(VivintPubNubCallback(self.__handle_pubnub))
+        if self.__pubnub == None:
+            self.__pubnub = PubNub(self.__pubnub_config)
+        self.__pubnub.add_listener(self.__pubnub_listener)
         self.__pubnub.subscribe().channels(
             "PlatformChannel#" + self.__auth_data[u"u"][u"mbc"]
         ).execute()
 
-    def __handle_pubnub(self, message):
+    def __handle_pubnub_message(self, message):
         if u"da" in message.keys():
             for p in self.__panels:
                 if p.id() == str(message[u"panid"]):
                     p.handle_message(message)
 
+    def __handle_pubnub_connected(self):
+        print("Connected to PubNub channel")
+
+    def __handle_pubnub_disconnected(self):
+        print("Disconnected from PubNub channel")
+        self.__pubnub.remove_listener(self.__pubnub_listener)
+        self.__pubnub.stop()
+
     def get_panels(self):
         return self.__panels
 
+    def disconnect(self):
+        """
+        This disconnects and shuts down everything.
+        """
+        self.__pubnub.unsubscribe_all()
+        self.__refresh_scheduler.shutdown()
+        self.__refresh_scheduler.remove_all_jobs()
