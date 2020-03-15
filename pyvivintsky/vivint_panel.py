@@ -1,3 +1,4 @@
+import asyncio
 from pyvivintsky.vivint_device import VivintDevice
 from pyvivintsky.vivint_api import VivintAPI
 from pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
@@ -11,14 +12,11 @@ class VivintPanel(VivintDevice):
 
     ARM_STATES = {0: "disarmed", 3: "armed_stay", 4: "armed_away"}
 
-    def __init__(self, vivintapi, descriptor):
+    def __init__(self, vivintapi: VivintAPI, descriptor: dict, panel: dict):
         self.__vivintapi: VivintAPI = vivintapi
         self.__descriptor = descriptor
-        self.__panel = self.__init_panel()
+        self.__panel = panel
         self.__child_devices = self.__init_devices()
-
-    def __init_panel(self):
-        return self.__vivintapi.get_system_info(str(self.__descriptor[u"panid"]))
 
     def __init_devices(self):
         """
@@ -54,11 +52,11 @@ class VivintPanel(VivintDevice):
         """Return the climate state"""
         return self.__panel[u"system"][u"csce"]
 
-    def poll_devices(self):
+    async def poll_devices(self):
         """
         Poll all devices attached to this panel.
         """
-        self.__panel = self.__init_panel()
+        self.__panel = await self.__vivintapi.get_system_info(self.id())
 
     def get_devices(self):
         """

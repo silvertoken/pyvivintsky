@@ -1,4 +1,3 @@
 black
-requests
-apscheduler
+aiohttp
 pubnub
