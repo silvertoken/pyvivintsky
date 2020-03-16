@@ -66,7 +66,6 @@ class VivintSky:
         self.__pubnub.subscribe().channels(
             "PlatformChannel#" + self.__auth_data[u"u"][u"mbc"]
         ).execute()
-        print("PlatformChannel#" + self.__auth_data[u"u"][u"mbc"])
 
     def __handle_pubnub_message(self, message):
         if u"da" in message.keys():

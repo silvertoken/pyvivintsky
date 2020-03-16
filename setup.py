@@ -2,7 +2,7 @@ import setuptools
 
 NAME = "pyVivintSky"
 PACKAGE_NAME = "pyvivintsky"
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -22,7 +22,8 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
-	license='MIT',
-	keywords='vivint',
+    install_requires=["aiohttp>=3.6", "pubnub>=4.5"],
+    python_requires=">=3.6",
+    license="MIT",
+    keywords="vivint",
 )

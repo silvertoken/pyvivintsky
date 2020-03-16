@@ -1,6 +1,7 @@
 import aiohttp
 import asyncio
 import json
+import datetime
 
 VIVENT_API_ENDPOINT = "https://www.vivintsky.com/api/"
 
@@ -14,6 +15,16 @@ class VivintAPI:
 
     def get_session(self):
         return self.__session
+
+    def session_valid(self):
+        session_date = datetime.datetime.strptime(
+            self.__session["expires"], "%a, %d %b %Y %H:%M:%S %Z"
+        )
+        current_date = datetime.datetime.now()
+        if current_date < session_date:
+            return True
+        else:
+            return False
 
     async def login(self):
         """Performs login to Vivint API and stores session cookie."""
@@ -31,6 +42,8 @@ class VivintAPI:
 
     async def get_system_info(self, panel_id):
         """Returns the system info from the Vivint API."""
+        if self.session_valid() == False:
+            await self.login()
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
             async with session.get(
@@ -45,6 +58,8 @@ class VivintAPI:
 
     async def get_authorized_user(self):
         """Retuns the authorized user data from the Vivint API."""
+        if self.session_valid() == False:
+            await self.login()
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
             async with session.get(url=VIVENT_API_ENDPOINT + "authuser") as response:
