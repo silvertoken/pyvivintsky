@@ -5,6 +5,7 @@ class VivintDevice(object):
 
     DEVICE_TYPE_TOUCH_PANEL = "primary_touch_link_device"
     DEVICE_TYPE_WIRELESS_SENSOR = "wireless_sensor"
+    DEVICE_TYPE_DOOR_LOCK = "door_lock_device"
 
     def __init__(self, device, root):
         self.__device = device

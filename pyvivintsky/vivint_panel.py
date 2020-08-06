@@ -2,6 +2,7 @@ import asyncio
 from pyvivintsky.vivint_device import VivintDevice
 from pyvivintsky.vivint_api import VivintAPI
 from pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
+from pyvivintsky.vivint_door_lock import VivintDoorLock
 from pyvivintsky.vivint_unknown_device import VivintUnknownDevice
 
 
@@ -77,6 +78,9 @@ class VivintPanel(VivintDevice):
 
     @staticmethod
     def get_device_class(type_string):
-        mapping = {VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor}
+        mapping = {
+            VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor,
+            VivintDevice.DEVICE_TYPE_DOOR_LOCK: VivintDoorLock
+        }
         return mapping.get(type_string, VivintUnknownDevice)
 
