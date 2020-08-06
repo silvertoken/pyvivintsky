@@ -46,14 +46,15 @@ This is the root device and all child devices are attached to it. Looking at the
 | PubNub       | Not Implemented Yet |
 
 ### Wireless Sensors
-##### Glass break sensors
-##### Garage tilt sensors
-##### Window/Door sensors
-##### Water sensor
-##### Water sensor heat
-##### Water sensor freeze
-##### Medical panic button
-##### Motion sensor
+
+* Garage tilt sensors
+* Glass break sensors
+* Medical panic button
+* Motion sensor
+* Water sensor
+* Water sensor heat
+* Water sensor freeze
+* Window/Door sensors
 
 Sub class of devices sensors. They self identify as wireless. Not necessarily via wifi.
 
@@ -76,6 +77,7 @@ I don't own one of these yet but there is enough information on the other sites 
 Sub class of devices sensors. My locks are on Zigbee not wifi
 
 | Feature | Status  |
+| :------ | ------: |
 | Name    | Working |
 | State   | Working |
 | PubNub  | Working |
