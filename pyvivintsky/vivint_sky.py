@@ -68,8 +68,18 @@ class VivintSky:
         ).execute()
 
     def __handle_pubnub_message(self, message):
-        if u"da" in message.keys():
-            self.__panels[str(message[u"panid"])].handle_message(message)
+        if u"panid" in message.keys():
+            if u"seca" in message[u'da'].keys():
+                self.__panels[str(message[u"panid"])].handle_armed_message(message)
+            if u"secd" in message[u'da'].keys():
+                self.__panels[str(message[u"panid"])].handle_disarmed_message(message)
+            else:
+                self.__panels[str(message[u"panid"])].handle_message(message)
+        elif u"desq" in message.keys():
+             self.__panels[str(message[u"desq"])].handle_message(message)
+        elif "inbox_message" in message[u"t"]:
+             print(message[u"da"][u"me"])
+             print(message[u"da"][u"sub"])
 
     def __handle_pubnub_connected(self):
         print("Connected to PubNub channel")

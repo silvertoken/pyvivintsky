@@ -76,6 +76,12 @@ class VivintPanel(VivintDevice):
             for msg_device in message[u"da"][u"d"]:
                 self.update_device(str(msg_device[u"_id"]), msg_device)
 
+    def handle_armed_message(self, message):
+        print(message[u"da"][u"seca"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
+
+    def handle_disarmed_message(self, message):
+        print(message[u"da"][u"secd"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
+
     @staticmethod
     def get_device_class(type_string):
         mapping = {

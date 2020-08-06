@@ -43,7 +43,7 @@ This is the root device and all child devices are attached to it. Looking at the
 | :----------- | ------------------: |
 | Armed State  |         In Progress |
 | Update State | Not Implemented Yet |
-| PubNub       | Not Implemented Yet |
+| PubNub       | Working |
 
 ### Wireless Sensors
 
@@ -100,9 +100,10 @@ Water detection and temperatures are combine it to a single additional device ca
 
 ### Camera Device
 
-| Feature | Status |
-| :------ | -----: |
-|         |        |
+| Feature   | Status  |
+| :-------- | ------: |
+| Name      | Working |
+| Detection | Working |
 
 ### Remote Keypads
 
