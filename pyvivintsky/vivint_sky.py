@@ -76,10 +76,14 @@ class VivintSky:
             else:
                 self.__panels[str(message[u"panid"])].handle_message(message)
         elif u"desq" in message.keys():
-             self.__panels[str(message[u"desq"])].handle_message(message)
+            print(message)
+            self.__panels[str(message[u"desq"])].handle_message(message)
         elif "inbox_message" in message[u"t"]:
-             print(message[u"da"][u"me"])
-             print(message[u"da"][u"sub"])
+            print(message[u"da"][u"me"])
+            print(message[u"da"][u"sub"])
+        else:
+            print("UNKNOWN")
+            print(message)
 
     def __handle_pubnub_connected(self):
         print("Connected to PubNub channel")

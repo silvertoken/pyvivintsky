@@ -11,7 +11,10 @@ class VivintPanel(VivintDevice):
     Represents the main Vivint panel device
     """
 
-    ARM_STATES = {0: "disarmed", 3: "armed_stay", 4: "armed_away"}
+    """
+    states 1 and 2 come from panel Model: 2GIG-PAD1-345
+    """
+    ARM_STATES = {0: "disarmed", 1: "armed_away", 2: "armed_stay", 3: "armed_stay", 4: "armed_away"}
 
     def __init__(self, vivintapi: VivintAPI, descriptor: dict, panel: dict):
         self.__vivintapi: VivintAPI = vivintapi
