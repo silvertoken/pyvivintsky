@@ -1,5 +1,8 @@
-from pyvivintsky.vivint_device import VivintDevice
-
+from homeauto.api_vivint.pyvivintsky.vivint_device import VivintDevice
+from homeauto.house import RegisterSensorEvent, RegisterMotionEvent
+import logging
+# This retrieves a Python logging instance (or creates it)
+logger = logging.getLogger(__name__)
 
 class VivintWirelessSensor(VivintDevice):
     """
@@ -18,4 +21,11 @@ class VivintWirelessSensor(VivintDevice):
 
     def update_device(self, updates):
         super().update_device(updates)
-        print(super().get_device()[u"n"] + " is now " + self.state())
+        name = super().get_device()[u"n"]
+        logger.debug(name + " is now " + self.state())
+        if "otion" in name:
+            RegisterMotionEvent("Vivint", super().id())
+        else:
+            RegisterSensorEvent("Vivint", super().id(), self.state())
+
+

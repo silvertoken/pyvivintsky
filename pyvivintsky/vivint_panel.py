@@ -1,10 +1,13 @@
 import asyncio
-from pyvivintsky.vivint_device import VivintDevice
-from pyvivintsky.vivint_api import VivintAPI
-from pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
-from pyvivintsky.vivint_door_lock import VivintDoorLock
-from pyvivintsky.vivint_unknown_device import VivintUnknownDevice
-
+from homeauto.api_vivint.pyvivintsky.vivint_device import VivintDevice
+from homeauto.api_vivint.pyvivintsky.vivint_api import VivintAPI
+from homeauto.api_vivint.pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
+from homeauto.api_vivint.pyvivintsky.vivint_door_lock import VivintDoorLock
+from homeauto.api_vivint.pyvivintsky.vivint_unknown_device import VivintUnknownDevice
+from homeauto.house import RegisterSecurityEvent
+import logging
+# This retrieves a Python logging instance (or creates it)
+logger = logging.getLogger(__name__)
 
 class VivintPanel(VivintDevice):
     """
@@ -12,7 +15,7 @@ class VivintPanel(VivintDevice):
     """
 
     """
-    states 1 and 2 come from panel Model: 2GIG-PAD1-345
+    states 1 and 2 come from panels
     """
     ARM_STATES = {0: "disarmed", 1: "armed_away", 2: "armed_stay", 3: "armed_stay", 4: "armed_away"}
 
@@ -80,10 +83,12 @@ class VivintPanel(VivintDevice):
                 self.update_device(str(msg_device[u"_id"]), msg_device)
 
     def handle_armed_message(self, message):
-        print(message[u"da"][u"seca"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
+        logger.debug(message[u"da"][u"seca"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
+        RegisterSecurityEvent(message[u"da"][u"seca"][u"n"],self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
 
     def handle_disarmed_message(self, message):
-        print(message[u"da"][u"secd"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
+        logger.debug(message[u"da"][u"secd"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
+        RegisterSecurityEvent(message[u"da"][u"secd"][u"n"],self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
 
     @staticmethod
     def get_device_class(type_string):

@@ -1,6 +1,9 @@
 from pubnub.callbacks import SubscribeCallback
 from pubnub.enums import PNOperationType, PNStatusCategory
+import logging
 
+# This retrieves a Python logging instance (or creates it)
+logger = logging.getLogger(__name__)
 
 class VivintPubNubCallback(SubscribeCallback):
     """
@@ -31,13 +34,13 @@ class VivintPubNubCallback(SubscribeCallback):
                 # This usually occurs if subscribe temporarily fails but reconnects. This means
                 # there was an error but there is no longer any issue
             elif status.category == PNStatusCategory.PNDisconnectedCategory:
-                print("Disconnect Event")
+                logger.info("Disconnect Event")
                 # self.__disconnected()
                 # pass
                 # This is the expected category for an unsubscribe. This means there
                 # was no error in unsubscribing from everything
             elif status.category == PNStatusCategory.PNUnexpectedDisconnectCategory:
-                print("PNUnexpectedDisconnectCategory")
+                logger.info("PNUnexpectedDisconnectCategory")
                 pass
                 # This is usually an issue with the internet connection, this is an error, handle
                 # appropriately retry will be called automatically
@@ -54,7 +57,7 @@ class VivintPubNubCallback(SubscribeCallback):
                     # print(status.is_error())
                     self.__disconnected()
             else:
-                print("Category: " + str(status.category))
+                logger.info("Category: " + str(status.category))
                 # This is usually an issue with the internet connection, this is an error, handle appropriately
                 # retry will be called automatically
         elif status.operation == PNOperationType.PNHeartbeatOperation:
@@ -62,14 +65,14 @@ class VivintPubNubCallback(SubscribeCallback):
             # For more information on how to configure heartbeat notifications through the status
             # PNObjectEventListener callback, consult http://www.pubnub.com/docs/python/api-reference-configuration#configuration
             if status.is_error():
-                print("Heartbeat Error")
+                logger.error("Heartbeat Error")
                 pass
                 # There was an error with the heartbeat operation, handle here
             else:
                 pass
                 # Heartbeat operation was successful
         else:
-            print("Unknown Status: " + str(status.operation))
+            logger.info("Unknown Status: " + str(status.operation))
             pass
             # Encountered unknown status type
 
