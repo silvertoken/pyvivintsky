@@ -4,7 +4,7 @@ from homeauto.api_vivint.pyvivintsky.vivint_api import VivintAPI
 from homeauto.api_vivint.pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
 from homeauto.api_vivint.pyvivintsky.vivint_door_lock import VivintDoorLock
 from homeauto.api_vivint.pyvivintsky.vivint_unknown_device import VivintUnknownDevice
-from homeauto.house import RegisterSecurityEvent
+from homeauto.house import register_security_event
 import logging
 # This retrieves a Python logging instance (or creates it)
 logger = logging.getLogger(__name__)
@@ -84,11 +84,11 @@ class VivintPanel(VivintDevice):
 
     def handle_armed_message(self, message):
         logger.debug(message[u"da"][u"seca"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
-        RegisterSecurityEvent(message[u"da"][u"seca"][u"n"],self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
+        register_security_event(message[u"da"][u"seca"][u"n"],self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
 
     def handle_disarmed_message(self, message):
         logger.debug(message[u"da"][u"secd"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
-        RegisterSecurityEvent(message[u"da"][u"secd"][u"n"],self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
+        register_security_event(message[u"da"][u"secd"][u"n"],self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
 
     @staticmethod
     def get_device_class(type_string):

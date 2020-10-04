@@ -4,7 +4,7 @@ from homeauto.api_vivint.pyvivintsky.vivint_panel import VivintPanel
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from homeauto.api_vivint.pyvivintsky.vivint_pubnub_callback import VivintPubNubCallback
-from homeauto.house import RegisterMotionEvent
+from homeauto.house import register_motion_event
 from homeauto.models.vivint import Device
 import logging
 # This retrieves a Python logging instance (or creates it)
@@ -95,7 +95,7 @@ class VivintSky:
                 # camera a motion detection does not include the camer id, but its name is in the sub message
                 camera_name = message[u"da"][u"sub"].split('-')
                 camera_name = camera_name[1].strip()
-                RegisterMotionEvent('Vivint', Device.objects.get(name=camera_name).id)
+                register_motion_event('Vivint', Device.objects.get(name=camera_name).id)
         else:
             logger.warning("UNKNOWN")
             print(message)
