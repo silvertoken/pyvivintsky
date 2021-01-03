@@ -1,4 +1,5 @@
 from homeauto.api_vivint.pyvivintsky.vivint_device import VivintDevice
+from homeauto.models.vivint import Device
 from homeauto.house import register_sensor_event
 import logging
 # This retrieves a Python logging instance (or creates it)
@@ -20,6 +21,7 @@ class VivintDoorLock(VivintDevice):
 
     def update_device(self, updates):
         super().update_device(updates)
+        (Device.objects.filter(id=updates['_id']).update)(state=self.DEVICE_STATES[updates['s']])
         logger.debug(super().get_device()[u"n"] + " is now " + self.state())
         register_sensor_event("Vivint", super().id(), self.state())
 

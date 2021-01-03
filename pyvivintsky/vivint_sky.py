@@ -30,6 +30,12 @@ class VivintSky:
         self.__pubnub_config.ssl = True
         self.__pubnub_config.subscribe_key = VIVINT_SUB_KEY
 
+    def get_session(self):
+        return self.__vivint_api.get_session()
+
+    def session_valid(self):
+        return self.__vivint_api.session_valid()
+
     async def login(self):
         if await self.__vivint_api.login():
             self.__auth_data = await self.__vivint_api.get_authorized_user()
@@ -89,13 +95,16 @@ class VivintSky:
             logger.info(message)
             self.__panels[str(message[u"desq"])].handle_message(message)
         elif "inbox_message" in message[u"t"]:
-            logger.debug(message[u"da"][u"me"])
-            logger.debug(message[u"da"][u"sub"])
-            if 'camera detected' in message[u"da"][u"me"]:
-                # camera a motion detection does not include the camer id, but its name is in the sub message
-                camera_name = message[u"da"][u"sub"].split('-')
-                camera_name = camera_name[1].strip()
-                register_motion_event('Vivint', Device.objects.get(name=camera_name).id)
+            try:
+                logger.debug(message[u"da"][u"me"])
+                logger.debug(message[u"da"][u"sub"])
+                if 'camera detected' in message[u"da"][u"me"]:
+                    # camera a motion detection does not include the camer id, but its name is in the sub message
+                    camera_name = message[u"da"][u"sub"].split('-')
+                    camera_name = camera_name[1].strip()
+                    register_motion_event('Vivint', Device.objects.get(name=camera_name).id)
+            except:
+                logger.error(message)
         else:
             logger.warning("UNKNOWN")
             print(message)
