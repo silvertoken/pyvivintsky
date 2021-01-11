@@ -1,9 +1,8 @@
-import aiohttp
-import asyncio
-import json
 import datetime
 
-VIVENT_API_ENDPOINT = "https://www.vivintsky.com/api/"
+import aiohttp
+
+VIVINT_API_ENDPOINT = "https://www.vivintsky.com/api/"
 
 
 class VivintAPI:
@@ -31,7 +30,7 @@ class VivintAPI:
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                url=VIVENT_API_ENDPOINT + "login", json=self.__credentials
+                url=VIVINT_API_ENDPOINT + "login", json=self.__credentials
             ) as response:
                 if response.status == 200:
                     self.__session = response.cookies["s"]
@@ -47,7 +46,7 @@ class VivintAPI:
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
             async with session.get(
-                url=VIVENT_API_ENDPOINT + "systems/" + panel_id
+                url=VIVINT_API_ENDPOINT + "systems/" + panel_id
             ) as response:
 
                 if response.status == 200:
@@ -62,10 +61,9 @@ class VivintAPI:
             await self.login()
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
-            async with session.get(url=VIVENT_API_ENDPOINT + "authuser") as response:
+            async with session.get(url=VIVINT_API_ENDPOINT + "authuser") as response:
                 if response.status == 200:
                     return await response.json()
                 else:
                     response.raise_for_status()
                     return None
-

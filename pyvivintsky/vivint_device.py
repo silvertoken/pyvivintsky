@@ -3,8 +3,23 @@ class VivintDevice(object):
     Class for Vivint Devices
     """
 
+    DEVICE_TYPE_CAMERA = "camera_device"
+    DEVICE_TYPE_DOOR_LOCK = "door_lock_device"
+    DEVICE_TYPE_GARAGE_DOOR = "garage_door_device"
+    DEVICE_TYPE_MULTILEVEL_SWITCH = "multilevel_switch_device"
     DEVICE_TYPE_TOUCH_PANEL = "primary_touch_link_device"
     DEVICE_TYPE_WIRELESS_SENSOR = "wireless_sensor"
+
+    # Other device types seen but not yet implemented:
+    # iot_service
+    # keyfob_device
+    # network_hosts_service
+    # panel_diagnostics_service
+    # phillips_hue_bridge_device
+    # scheduler_service
+    # slim_line_device
+    # thermostat_device
+    # yofi_device
 
     def __init__(self, device, root):
         self.__device = device
