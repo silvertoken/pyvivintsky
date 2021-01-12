@@ -70,3 +70,13 @@ I don't own any of these but there is enough information on the other sites I th
 | Feature | Status |
 | :------ | -----: |
 |         |        |
+
+### Garage Doors
+
+Garage doors that connect to the system via Z-Wave
+
+| Feature |  Status |
+| :------ | ------: |
+| Name    | Working |
+| State   | Working |
+| PubNub  | Working |

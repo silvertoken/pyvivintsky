@@ -3,6 +3,7 @@ import logging
 from pyvivintsky.vivint_api import VivintAPI
 from pyvivintsky.vivint_device import VivintDevice
 from pyvivintsky.vivint_door_lock import VivintDoorLock
+from pyvivintsky.vivint_garage_door import VivintGarageDoor
 from pyvivintsky.vivint_unknown_device import VivintUnknownDevice
 from pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
 
@@ -117,5 +118,6 @@ class VivintPanel(VivintDevice):
         mapping = {
             VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor,
             VivintDevice.DEVICE_TYPE_DOOR_LOCK: VivintDoorLock,
+            VivintDevice.DEVICE_TYPE_GARAGE_DOOR: VivintGarageDoor,
         }
         return mapping.get(type_string, VivintUnknownDevice)
