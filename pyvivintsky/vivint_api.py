@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 import aiohttp
 
@@ -16,10 +16,10 @@ class VivintAPI:
         return self.__session
 
     def session_valid(self):
-        session_date = datetime.datetime.strptime(
+        session_date = datetime.strptime(
             self.__session["expires"], "%a, %d %b %Y %H:%M:%S %Z"
         )
-        current_date = datetime.datetime.now()
+        current_date = datetime.utcnow()
         if current_date < session_date:
             return True
         else:
@@ -30,7 +30,7 @@ class VivintAPI:
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                url=VIVINT_API_ENDPOINT + "login", json=self.__credentials
+                url=f"{VIVINT_API_ENDPOINT}login", json=self.__credentials
             ) as response:
                 if response.status == 200:
                     self.__session = response.cookies["s"]
@@ -46,7 +46,7 @@ class VivintAPI:
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
             async with session.get(
-                url=VIVINT_API_ENDPOINT + "systems/" + panel_id
+                url=f"{VIVINT_API_ENDPOINT}systems/{panel_id}"
             ) as response:
 
                 if response.status == 200:
@@ -61,7 +61,7 @@ class VivintAPI:
             await self.login()
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
-            async with session.get(url=VIVINT_API_ENDPOINT + "authuser") as response:
+            async with session.get(url=f"{VIVINT_API_ENDPOINT}authuser") as response:
                 if response.status == 200:
                     return await response.json()
                 else:
