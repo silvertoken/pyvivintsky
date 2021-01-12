@@ -98,6 +98,10 @@ class VivintPanel(VivintDevice):
     def handle_arming_message(self, message):
         logger.debug(message["n"] + " set system " + self.ARM_STATES[message["s"]])
 
+    async def set_armed_state(self, arm_state):
+        """Sets the panels armed state."""
+        await self.__vivintapi.set_armed_state(self.id(), arm_state)
+
     @staticmethod
     def get_device_class(type_string):
         mapping = {

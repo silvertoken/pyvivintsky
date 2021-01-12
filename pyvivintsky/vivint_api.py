@@ -67,3 +67,20 @@ class VivintAPI:
                 else:
                     response.raise_for_status()
                     return None
+
+    async def set_armed_state(self, panel_id, arm_state):
+        """Sets the panels armed state by invoking the Vivint API."""
+        if self.session_valid() == False:
+            await self.login()
+        cookie = dict(s=self.__session.value)
+        async with aiohttp.ClientSession(cookies=cookie) as session:
+            async with session.put(
+                url=f"{VIVINT_API_ENDPOINT}{panel_id}/0/armedstates",
+                json={"armState": arm_state},
+            ) as response:
+
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    response.raise_for_status()
+                    return None
