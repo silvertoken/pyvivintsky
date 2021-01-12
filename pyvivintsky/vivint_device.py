@@ -1,3 +1,6 @@
+import asyncio
+
+
 class VivintDevice(object):
     """
     Class for Vivint Devices
@@ -24,6 +27,7 @@ class VivintDevice(object):
     def __init__(self, device, root):
         self.__device = device
         self.__root = root
+        self.__callback = None
 
     def get_root(self):
         """ Return the root device this is attached too."""
@@ -50,3 +54,8 @@ class VivintDevice(object):
 
     def update_device(self, updates):
         self.__device.update(updates)
+        asyncio.wait(self.callback())
+
+    async def callback(self):
+        if self.__callback is not None:
+            await self.__callback()

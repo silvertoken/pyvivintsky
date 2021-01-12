@@ -69,11 +69,10 @@ class VivintSky:
         ).execute()
 
     def __handle_pubnub_message(self, message):
-        logger.info(message)
         if u"panid" in message.keys():
             self.__panels[str(message[u"panid"])].handle_message(message)
         elif u"desq" in message.keys():
-            logger.info(message)
+            logger.debug(message)
             self.__panels[str(message[u"desq"])].handle_message(message)
         elif "inbox_message" in message[u"t"]:
             try:

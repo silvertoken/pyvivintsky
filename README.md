@@ -39,15 +39,15 @@ and closing.
 
 This is the root device and all child devices are attached to it. Looking at the API its possible for an account to have more than one panel and this makes attempts to handle that.
 
-| Feature      |              Status |
-| :----------- | ------------------: |
-| Armed State  |         In Progress |
-| Update State | Not Implemented Yet |
-| PubNub       | Not Implemented Yet |
+| Feature      |  Status |
+| :----------- | ------: |
+| Armed State  | Working |
+| Update State | Working |
+| PubNub       | Working |
 
 ### Wireless Sensors
 
-These are any device that remotely connect to the sytem via wifi. This includes door sensors, break glass, and motion detectors.
+Devices that remotely connect to the sytem via 345 MHz wireless frequency. This includes door sensors, glass breaks, and motion detectors.
 
 | Feature |  Status |
 | :------ | ------: |
