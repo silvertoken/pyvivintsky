@@ -16,10 +16,11 @@ class VivintPanel(VivintDevice):
 
     ARM_STATES = {0: "disarmed", 3: "armed_stay", 4: "armed_away"}
 
-    def __init__(self, vivintapi: VivintAPI, descriptor: dict, panel: dict):
+    def __init__(self, vivintapi: VivintAPI, descriptor: dict, system: dict):
         self.__vivintapi: VivintAPI = vivintapi
         self.__descriptor = descriptor
-        self.__panel = panel
+        self.__system = system
+        self.__panel = None
         self.__child_devices = self.__init_devices()
 
     def __init_devices(self):
@@ -27,14 +28,17 @@ class VivintPanel(VivintDevice):
         Initialize the devices
         """
         devices = {}
-        for device in self.__panel["system"]["par"][0]["d"]:
+        for device in self.__system["par"][0]["d"]:
             devices[str(device["_id"])] = self.get_device_class(device["t"])(
                 device, self
             )
+            if device["t"] == "primary_touch_link_device":
+                self.__panel = devices[str(device["_id"])]
+
         return devices
 
     def id(self):
-        return str(self.__panel["system"]["panid"])
+        return str(self.__system["panid"])
 
     def name(self):
         """Return the name of the panel."""
@@ -42,29 +46,33 @@ class VivintPanel(VivintDevice):
 
     def get_armed_state(self):
         """Return panels armed state."""
-        return self.ARM_STATES[self.__panel["system"]["s"]]
+        return self.ARM_STATES[self.__system["s"]]
+
+    def panel_type(self):
+        """Return the panel type."""
+        return "Sky Control" if self.__panel.get_device()["pant"] == 1 else "Smart Hub"
 
     def street(self):
         """Return the panels street address."""
-        return self.__panel["system"]["add"]
+        return self.__system["add"]
 
     def zip_code(self):
         """Return the panels zip code."""
-        return self.__panel["system"]["poc"]
+        return self.__system["poc"]
 
     def city(self):
         """Return the panels city."""
-        return self.__panel["system"]["cit"]
+        return self.__system["cit"]
 
     def climate_state(self):
         """Return the climate state"""
-        return self.__panel["system"]["csce"]
+        return self.__system["csce"]
 
     async def poll_devices(self):
         """
         Poll all devices attached to this panel.
         """
-        self.__panel = await self.__vivintapi.get_system_info(self.id())
+        self.__system = await self.__vivintapi.get_system_info(self.id())
 
     def get_devices(self):
         """
@@ -86,11 +94,11 @@ class VivintPanel(VivintDevice):
             ignored_keys = ["plctx"]
 
             for key in message["da"].keys():
-                if key not in ignored_keys and key in self.__panel["system"].keys():
+                if key not in ignored_keys and key in self.__system.keys():
                     if type(message["da"][key]) is dict:
-                        self.__panel["system"][key].update(message["da"][key])
+                        self.__system[key].update(message["da"][key])
                     else:
-                        self.__panel["system"][key] = message["da"][key]
+                        self.__system[key] = message["da"][key]
 
                 if key in ["seca", "secd"]:
                     self.handle_arming_message(message["da"][key])

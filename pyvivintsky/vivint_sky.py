@@ -51,9 +51,9 @@ class VivintSky:
         """
         panels = {}
         for descriptor in self.__auth_data["u"]["system"]:
-            panel = await self.__vivint_api.get_system_info(str(descriptor["panid"]))
+            system = await self.__vivint_api.get_system_info(str(descriptor["panid"]))
             panels[str(descriptor["panid"])] = VivintPanel(
-                self.__vivint_api, descriptor, panel
+                self.__vivint_api, descriptor, system["system"]
             )
         return panels
 
