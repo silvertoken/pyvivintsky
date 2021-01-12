@@ -1,4 +1,8 @@
+import logging
+
 from pyvivintsky.vivint_device import VivintDevice
+
+logger = logging.getLogger(__name__)
 
 
 class VivintWirelessSensor(VivintDevice):
