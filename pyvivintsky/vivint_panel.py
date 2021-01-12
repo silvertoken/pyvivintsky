@@ -36,6 +36,10 @@ class VivintPanel(VivintDevice):
     def id(self):
         return str(self.__panel["system"]["panid"])
 
+    def name(self):
+        """Return the name of the panel."""
+        return self.__descriptor["sn"]
+
     def get_armed_state(self):
         """Return panels armed state."""
         return self.ARM_STATES[self.__panel["system"]["s"]]
