@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 from pyvivintsky.vivint_api import VivintAPI
@@ -96,7 +95,7 @@ class VivintPanel(VivintDevice):
                 if key in ["seca", "secd"]:
                     self.handle_arming_message(message["da"][key])
 
-            asyncio.wait(self.callback())
+            self.callback()
 
     def handle_arming_message(self, message):
         logger.debug(message["n"] + " set system " + self.ARM_STATES[message["s"]])
