@@ -78,8 +78,6 @@ class VivintPanel(VivintDevice):
         if "d" in message["da"].keys():
             for msg_device in message["da"]["d"]:
                 self.update_device(str(msg_device["_id"]), msg_device)
-            if len(message["da"]) != 2:
-                print("unexpected length")
         else:
             ignored_keys = ["plctx"]
 

@@ -32,7 +32,7 @@ class VivintSky:
     async def login(self):
         if await self.__vivint_api.login():
             self.__auth_data = await self.__vivint_api.get_authorized_user()
-            print("Logged into VivintSky API")
+            logger.debug("Logged into VivintSky API")
             return True
         else:
             raise ("Failed to authenticate to Vivint Sky")
@@ -90,13 +90,13 @@ class VivintSky:
                 logger.error(message)
         else:
             logger.warning("UNKNOWN")
-            print(message)
+            logger.debug(message)
 
     def __handle_pubnub_connected(self):
-        print("Connected to PubNub channel")
+        logger.debug("Connected to PubNub channel")
 
     def __handle_pubnub_disconnected(self):
-        print("Disconnected from PubNub channel")
+        logger.debug("Disconnected from PubNub channel")
         self.__pubnub.remove_listener(self.__pubnub_listener)
         self.__pubnub.stop()
 

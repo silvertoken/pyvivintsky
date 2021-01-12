@@ -18,4 +18,4 @@ class VivintWirelessSensor(VivintDevice):
 
     def update_device(self, updates):
         super().update_device(updates)
-        print(super().get_device()[u"n"] + " is now " + self.state())
+        logger.debug(super().get_device()[u"n"] + " is now " + self.state())
