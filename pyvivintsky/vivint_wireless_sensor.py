@@ -123,7 +123,7 @@ class VivintWirelessSensor(VivintDevice):
 
     def sensor_type(self):
         """Return the sensor type of this sensor."""
-        return self.EquipmentType(super().get_device()[u"set"])
+        return self.SensorType(super().get_device()[u"set"])
 
     def update_device(self, updates):
         super().update_device(updates)
