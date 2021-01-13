@@ -109,22 +109,26 @@ class VivintWirelessSensor(VivintDevice):
     def __init__(self, device, root):
         super().__init__(device, root)
 
+    @property
     def state(self):
         """Returns Opened or Closed based on the state of the sensor."""
         return self.SENSOR_STATES[super().get_device()[u"s"]]
 
+    @property
     def equipment_code(self):
         """Return the equipment code of this sensor."""
         return self.EquipmentCode(super().get_device()[u"ec"])
 
+    @property
     def equipment_type(self):
         """Return the equipment type of this sensor."""
         return self.EquipmentType(super().get_device()[u"eqt"])
 
+    @property
     def sensor_type(self):
         """Return the sensor type of this sensor."""
         return self.SensorType(super().get_device()[u"set"])
 
     def update_device(self, updates):
         super().update_device(updates)
-        logger.debug(super().get_device()[u"n"] + " is now " + self.state())
+        logger.debug(super().get_device()[u"n"] + " is now " + self.state)

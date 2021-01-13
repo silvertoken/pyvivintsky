@@ -42,9 +42,12 @@ class VivintPanel(VivintDevice):
         """Return the Vivint API."""
         return self.__vivintapi
 
+    @property
     def id(self):
+        """Return the ID of the panel."""
         return str(self.__system["panid"])
 
+    @property
     def name(self):
         """Return the name of the panel."""
         return self.__descriptor["sn"]
@@ -53,22 +56,27 @@ class VivintPanel(VivintDevice):
         """Return panels armed state."""
         return self.ARM_STATES[self.__system["s"]]
 
+    @property
     def panel_type(self):
         """Return the panel type."""
         return "Sky Control" if self.__panel.get_device()["pant"] == 1 else "Smart Hub"
 
+    @property
     def street(self):
         """Return the panels street address."""
         return self.__system["add"]
 
+    @property
     def zip_code(self):
         """Return the panels zip code."""
         return self.__system["poc"]
 
+    @property
     def city(self):
         """Return the panels city."""
         return self.__system["cit"]
 
+    @property
     def climate_state(self):
         """Return the climate state"""
         return self.__system["csce"]
@@ -77,7 +85,7 @@ class VivintPanel(VivintDevice):
         """
         Poll all devices attached to this panel.
         """
-        self.__system = await self.__vivintapi.get_system_info(self.id())
+        self.__system = await self.__vivintapi.get_system_info(self.id)
 
     def get_devices(self):
         """
@@ -115,7 +123,7 @@ class VivintPanel(VivintDevice):
 
     async def set_armed_state(self, arm_state):
         """Sets the panels armed state."""
-        await self.__vivintapi.set_armed_state(self.id(), arm_state)
+        await self.__vivintapi.set_armed_state(self.id, arm_state)
 
     @staticmethod
     def get_device_class(type_string):

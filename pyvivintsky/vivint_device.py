@@ -1,7 +1,8 @@
+from typing import Any, Dict
+
+
 class VivintDevice(object):
-    """
-    Class for Vivint Devices
-    """
+    """Class for Vivint Devices"""
 
     DEVICE_TYPE_CAMERA = "camera_device"
     DEVICE_TYPE_DOOR_LOCK = "door_lock_device"
@@ -21,32 +22,36 @@ class VivintDevice(object):
     # thermostat_device
     # yofi_device
 
-    def __init__(self, device, root):
+    def __init__(self, device, root) -> None:
         self.__device = device
         self.__root = root
         self._callback = None
 
-    def get_root(self):
+    def get_root(self) -> object:
         """ Return the root device this is attached too."""
         return self.__root
 
-    def get_device(self):
+    def get_device(self) -> Dict[str, Any]:
         """ Returns the json dictionary data from the initial request."""
         return self.__device
 
-    def id(self):
+    @property
+    def id(self) -> int:
         return self.__device[u"_id"]
 
-    def name(self):
+    @property
+    def name(self) -> str:
         if u"n" in self.__device.keys():
             return self.__device[u"n"]
         else:
             return ""
 
-    def device_type(self):
+    @property
+    def device_type(self) -> str:
         return self.__device[u"t"]
 
-    def battery_level(self):
+    @property
+    def battery_level(self) -> int:
         """Return the battery level of this device, if any."""
         battery_level = self.__device.get(u"bl")
         low_battery = self.__device.get(u"lb")
@@ -57,7 +62,8 @@ class VivintDevice(object):
         else:
             return 0 if low_battery else 100
 
-    def software_version(self):
+    @property
+    def software_version(self) -> str:
         """Return the software version of this device, if any."""
         current_software_version = self.__device.get(u"csv")
         software_version = self.__device.get(u"sv")
@@ -73,13 +79,13 @@ class VivintDevice(object):
             or sensor_firmware_version  # wireless sensors
         )
 
-    def set_device(self, device):
+    def set_device(self, device) -> None:
         self.__device = device
 
-    def update_device(self, updates):
+    def update_device(self, updates) -> None:
         self.__device.update(updates)
         self.callback()
 
-    def callback(self):
+    def callback(self) -> None:
         if self._callback is not None:
             self._callback()
