@@ -46,6 +46,17 @@ class VivintDevice(object):
     def device_type(self):
         return self.__device[u"t"]
 
+    def battery_level(self):
+        """Return the battery level of this device."""
+        battery_level = self.__device.get(u"bl")
+        low_battery = self.__device.get(u"lb")
+        if battery_level is None and low_battery is None:
+            return None
+        elif battery_level is not None:
+            return battery_level
+        else:
+            return 0 if low_battery else 100
+
     def set_device(self, device):
         self.__device = device
 
