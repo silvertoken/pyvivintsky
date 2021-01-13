@@ -9,19 +9,6 @@ logger = logging.getLogger(__name__)
 class VivintWirelessSensor(VivintDevice):
     """Generic Wireless Sensor."""
 
-    class EquipmentType(Enum):
-        CONTACT = 1
-        EMERGENCY = 11
-        FREEZE = 6
-        MOTION = 2
-        TEMPERATURE = 10
-        UNKNOWN = 0
-        WATER = 8
-
-        @classmethod
-        def _missing_(cls, value):
-            return cls.UNKNOWN
-
     class EquipmentCode(Enum):
         CARBON_MONOXIDE_DETECTOR_345_MHZ = 1254
         CO1_CO = 860
@@ -81,6 +68,41 @@ class VivintWirelessSensor(VivintDevice):
         def _missing_(cls, value):
             return cls.OTHER
 
+    class EquipmentType(Enum):
+        CONTACT = 1
+        EMERGENCY = 11
+        FREEZE = 6
+        MOTION = 2
+        TEMPERATURE = 10
+        UNKNOWN = 0
+        WATER = 8
+
+        @classmethod
+        def _missing_(cls, value):
+            return cls.UNKNOWN
+
+    class SensorType(Enum):
+        AUDIBLE_ALARM = 7
+        AUXILIARY_ALARM = 8
+        CARBON_MONOXIDE = 14
+        DAY_ZONE = 5
+        EXIT_ENTRY_1 = 1
+        EXIT_ENTRY_2 = 2
+        FIRE = 9
+        FIRE_WITH_VERIFICATION = 16
+        INTERIOR_FOLLOWER = 4
+        INTERIOR_WITH_DELAY = 10
+        NO_RESPONSE = 23
+        PERIMETER = 3
+        REPEATER = 25
+        SILENT_ALARM = 6
+        SILENT_BURGLARY = 24
+        UNUSED = 0
+
+        @classmethod
+        def _missing_(cls, value):
+            return cls.UNUSED
+
     """Generic state for all sensors they uses a simple boolean."""
     SENSOR_STATES = {True: "Opened", False: "Closed"}
 
@@ -91,13 +113,17 @@ class VivintWirelessSensor(VivintDevice):
         """Returns Opened or Closed based on the state of the sensor."""
         return self.SENSOR_STATES[super().get_device()[u"s"]]
 
+    def equipment_code(self):
+        """Return the equipment code of this sensor."""
+        return self.EquipmentCode(super().get_device()[u"ec"])
+
     def equipment_type(self):
         """Return the equipment type of this sensor."""
         return self.EquipmentType(super().get_device()[u"eqt"])
 
-    def equipment_code(self):
-        """Return the equipment code of this sensor."""
-        return self.EquipmentCode(super().get_device()[u"ec"])
+    def sensor_type(self):
+        """Return the sensor type of this sensor."""
+        return self.EquipmentType(super().get_device()[u"set"])
 
     def update_device(self, updates):
         super().update_device(updates)
