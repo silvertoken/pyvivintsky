@@ -20,3 +20,13 @@ class VivintDoorLock(VivintDevice):
     def update_device(self, updates):
         super().update_device(updates)
         logger.debug(super().get_device()[u"n"] + " is now " + self.state())
+
+    async def lock(self):
+        """Lock the lock."""
+        panel = super().get_root()
+        await panel.get_api().set_lock_state(panel.id(), super().id(), True)
+
+    async def unlock(self):
+        """Unlock the lock."""
+        panel = super().get_root()
+        await panel.get_api().set_lock_state(panel.id(), super().id(), False)

@@ -65,11 +65,14 @@ I don't own one of these yet but there is enough information on the other sites 
 
 ### Door Locks
 
-I don't own any of these but there is enough information on the other sites I think to implement the features.
+Door locks that connect to the system via Z-Wave
 
-| Feature | Status |
-| :------ | -----: |
-|         |        |
+| Feature     |  Status |
+| :---------- | ------: |
+| Name        | Working |
+| State       | Working |
+| Lock/Unlock | Working |
+| PubNub      | Working |
 
 ### Garage Doors
 
