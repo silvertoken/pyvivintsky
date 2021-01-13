@@ -84,3 +84,20 @@ class VivintAPI:
                 else:
                     response.raise_for_status()
                     return None
+
+    async def set_garage_door_state(self, panel_id, device_id, garage_state):
+        """Sets the garage door state by invoking the Vivint API."""
+        if self.session_valid() == False:
+            await self.login()
+        cookie = dict(s=self.__session.value)
+        async with aiohttp.ClientSession(cookies=cookie) as session:
+            async with session.put(
+                url=f"{VIVINT_API_ENDPOINT}{panel_id}/0/door/{device_id}",
+                json={"s": garage_state},
+            ) as response:
+
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    response.raise_for_status()
+                    return None

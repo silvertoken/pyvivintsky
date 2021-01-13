@@ -38,6 +38,10 @@ class VivintPanel(VivintDevice):
 
         return devices
 
+    def get_api(self):
+        """Return the Vivint API."""
+        return self.__vivintapi
+
     def id(self):
         return str(self.__system["panid"])
 
