@@ -55,9 +55,14 @@ class VivintPanel(VivintDevice):
         return self.__vivintapi
 
     @property
-    def id(self):
-        """Return the ID of the panel."""
+    def id(self) -> str:
+        """Return the id for this panel."""
         return str(self.__system.get("panid"))
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique id for this panel."""
+        return self.id
 
     @property
     def name(self):

@@ -36,25 +36,35 @@ class VivintDevice(object):
         return self.__device
 
     @property
-    def id(self) -> int:
-        return self.__device[u"_id"]
+    def id(self) -> str:
+        """Return the id for this device."""
+        return str(self.__device.get("_id"))
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique id for this device."""
+        # wireless sensors and keyfobs
+        serial_number = self.__device.get("ser")
+        # glance panel
+        panel_mac = self.__device.get("pmac")
+        # cameras
+        camera_mac = self.__device.get("cmac")
+
+        return f"{self.__device.get(u'panid')}-{serial_number or panel_mac or camera_mac or self.id}"
 
     @property
     def name(self) -> str:
-        if u"n" in self.__device.keys():
-            return self.__device[u"n"]
-        else:
-            return ""
+        return self.__device.get("n")
 
     @property
     def device_type(self) -> str:
-        return self.__device[u"t"]
+        return self.__device["t"]
 
     @property
     def battery_level(self) -> int:
         """Return the battery level of this device, if any."""
-        battery_level = self.__device.get(u"bl")
-        low_battery = self.__device.get(u"lb")
+        battery_level = self.__device.get("bl")
+        low_battery = self.__device.get("lb")
         if battery_level is None and low_battery is None:
             return None
         elif battery_level is not None:
@@ -65,18 +75,22 @@ class VivintDevice(object):
     @property
     def software_version(self) -> str:
         """Return the software version of this device, if any."""
-        current_software_version = self.__device.get(u"csv")
-        software_version = self.__device.get(u"sv")
+        # panels
+        current_software_version = self.__device.get("csv")
+        # cameras
+        software_version = self.__device.get("sv")
+        # z-wave devices (some)
         firmware_version = (
-            ".".join([str(i) for s in self.__device.get(u"fwv") or [] for i in s])
+            ".".join([str(i) for s in self.__device.get("fwv") or [] for i in s])
             or None
         )
-        sensor_firmware_version = self.__device.get(u"sensor_firmware_version")
+        # wireless sensors
+        sensor_firmware_version = self.__device.get("sensor_firmware_version")
         return (
-            current_software_version  # panels
-            or software_version  # cameras
-            or firmware_version  # z-wave devices (some)
-            or sensor_firmware_version  # wireless sensors
+            current_software_version
+            or software_version
+            or firmware_version
+            or sensor_firmware_version
         )
 
     def set_device(self, device) -> None:
