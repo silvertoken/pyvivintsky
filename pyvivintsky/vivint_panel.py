@@ -60,8 +60,8 @@ class VivintPanel(VivintDevice):
         return str(self.__system.get("panid"))
 
     @property
-    def unique_id(self) -> str:
-        """Return the unique id for this panel."""
+    def serial_number(self) -> str:
+        """Return the serial number for this panel."""
         return self.id
 
     @property

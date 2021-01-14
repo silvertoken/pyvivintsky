@@ -41,8 +41,8 @@ class VivintDevice(object):
         return str(self.__device.get("_id"))
 
     @property
-    def unique_id(self) -> str:
-        """Return the unique id for this device."""
+    def serial_number(self) -> str:
+        """Return the serial number for this device."""
         # wireless sensors and keyfobs
         serial_number = self.__device.get("ser")
         # glance panel
