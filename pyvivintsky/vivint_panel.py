@@ -1,6 +1,7 @@
 import logging
 
 from pyvivintsky.vivint_api import VivintAPI
+from pyvivintsky.vivint_camera import VivintCamera
 from pyvivintsky.vivint_device import VivintDevice
 from pyvivintsky.vivint_door_lock import VivintDoorLock
 from pyvivintsky.vivint_garage_door import VivintGarageDoor
@@ -23,6 +24,7 @@ class VivintPanel(VivintDevice):
         self.__system = system
         self.__panel = None
         self.__child_devices = self.__init_devices()
+        self.__credentials = None
 
     def __init_devices(self):
         """
@@ -62,6 +64,11 @@ class VivintPanel(VivintDevice):
         return "Sky Control" if self.__panel.get_device()["pant"] == 1 else "Smart Hub"
 
     @property
+    def direct_ip(self):
+        """Return  the panel's local ip address."""
+        return self.__panel.get_device()["dip"]
+
+    @property
     def street(self):
         """Return the panels street address."""
         return self.__system["add"]
@@ -82,10 +89,14 @@ class VivintPanel(VivintDevice):
         return self.__system["csce"]
 
     async def poll_devices(self):
-        """
-        Poll all devices attached to this panel.
-        """
+        """Poll all devices attached to this panel."""
         self.__system = await self.__vivintapi.get_system_info(self.id)
+
+    async def get_panel_credentials(self):
+        """Gets the panel credentials."""
+        if self.__credentials is None:
+            self.__credentials = await self.__vivintapi.get_panel_credentials(self.id)
+        return self.__credentials
 
     def get_devices(self):
         """
@@ -131,5 +142,6 @@ class VivintPanel(VivintDevice):
             VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor,
             VivintDevice.DEVICE_TYPE_DOOR_LOCK: VivintDoorLock,
             VivintDevice.DEVICE_TYPE_GARAGE_DOOR: VivintGarageDoor,
+            VivintDevice.DEVICE_TYPE_CAMERA: VivintCamera,
         }
         return mapping.get(type_string, VivintUnknownDevice)
