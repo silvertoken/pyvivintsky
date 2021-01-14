@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 
 from pyvivintsky.vivint_api import VivintAPI
 from pyvivintsky.vivint_camera import VivintCamera
@@ -12,11 +13,20 @@ logger = logging.getLogger(__name__)
 
 
 class VivintPanel(VivintDevice):
-    """
-    Represents the main Vivint panel device
-    """
+    """Represents the main Vivint panel device."""
 
-    ARM_STATES = {0: "disarmed", 3: "armed_stay", 4: "armed_away"}
+    class ArmState(Enum):
+        DISARMED = 0
+        ARMING_AWAY_IN_EXIT_DELAY = 1
+        ARMING_STAY_IN_EXIT_DELAY = 2
+        ARMED_STAY = 3
+        ARMED_AWAY = 4
+        ARMED_STAY_IN_ENTRY_DELAY = 5
+        ARMED_AWAY_IN_ENTRY_DELAY = 6
+        ALARM = 7
+        ALARM_FIRE = 8
+        DISABLED = 11
+        WALK_TEST = 12
 
     def __init__(self, vivintapi: VivintAPI, descriptor: dict, system: dict):
         self.__vivintapi: VivintAPI = vivintapi
@@ -47,16 +57,24 @@ class VivintPanel(VivintDevice):
     @property
     def id(self):
         """Return the ID of the panel."""
-        return str(self.__system["panid"])
+        return str(self.__system.get("panid"))
 
     @property
     def name(self):
         """Return the name of the panel."""
-        return self.__descriptor["sn"]
+        return self.__descriptor.get("sn")
 
-    def get_armed_state(self):
-        """Return panels armed state."""
-        return self.ARM_STATES[self.__system["s"]]
+    @property
+    def state(self):
+        """Return the state of the panel."""
+        return self.ArmState(self.__system.get("s"))
+
+    @property
+    def changed_by(self):
+        """Return the name of the user that last changed the state of the system."""
+        return self.__system.get(
+            "secd" if self.state == self.ArmState.DISARMED else "seca"
+        ).get("n")
 
     @property
     def panel_type(self):
@@ -130,11 +148,11 @@ class VivintPanel(VivintDevice):
             self.callback()
 
     def handle_arming_message(self, message):
-        logger.debug(message["n"] + " set system " + self.ARM_STATES[message["s"]])
+        logger.debug(message["n"] + " set system " + self.state.name)
 
-    async def set_armed_state(self, arm_state):
+    async def set_armed_state(self, arm_state: ArmState):
         """Sets the panels armed state."""
-        await self.__vivintapi.set_armed_state(self.id, arm_state)
+        await self.__vivintapi.set_armed_state(self.id, arm_state.value)
 
     @staticmethod
     def get_device_class(type_string):
