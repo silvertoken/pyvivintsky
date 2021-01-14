@@ -23,26 +23,26 @@ class VivintGarageDoor(VivintDevice):
     @property
     def state(self):
         """Returns the state of the device."""
-        return self.GarageDoorState(super().get_device()[u"s"])
+        return self.GarageDoorState(self.get_device().get("s"))
 
     def update_device(self, updates):
         super().update_device(updates)
-        logger.debug(super().get_device()[u"n"] + " is now " + self.state.name)
+        logger.debug(f"{self.name} is now {self.state.name}")
 
     async def close_garage_door(self):
         """Closes a garage dooor."""
-        panel = super().get_root()
+        panel = self.get_root()
         await panel.get_api().set_garage_door_state(
             panel.id,
-            super().id,
+            self.id,
             self.GarageDoorState.Closing.value,
         )
 
     async def open_garage_door(self):
         """Opens a garage dooor."""
-        panel = super().get_root()
+        panel = self.get_root()
         await panel.get_api().set_garage_door_state(
             panel.id,
-            super().id,
+            self.id,
             self.GarageDoorState.Opening.value,
         )
