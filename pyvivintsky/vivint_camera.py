@@ -7,6 +7,16 @@ class VivintCamera(VivintDevice):
     def __init__(self, device, root):
         super().__init__(device, root)
 
+    @property
+    def manufacturer(self):
+        """Return the manufacturer of this camera."""
+        return self.get_device().get("act").split("_")[0].title()
+
+    @property
+    def model(self):
+        """Return the model of this camera."""
+        return self.get_device().get("act").split("_")[1].upper()
+
     async def get_direct_rtsp_url(self, hd: bool = False) -> str:
         """Return the direct rtsp url for this camera (in HD if requested), if any."""
         return (
