@@ -71,7 +71,7 @@ class VivintDevice(object):
         """Return the manufacturer for this device."""
         if not self._manufacturer and self.get_device().get("zpd"):
             self.get_zwave_details()
-        return self._manufacturer
+        return self._manufacturer or "Vivint"
 
     @property
     def model(self):

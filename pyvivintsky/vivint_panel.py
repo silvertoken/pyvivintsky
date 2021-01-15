@@ -82,8 +82,8 @@ class VivintPanel(VivintDevice):
         ).get("n")
 
     @property
-    def panel_type(self):
-        """Return the panel type."""
+    def model(self):
+        """Return the model (panel type) of this panel."""
         return "Sky Control" if self.__panel.get_device()["pant"] == 1 else "Smart Hub"
 
     @property
