@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 import aiohttp
@@ -11,6 +12,7 @@ class VivintAPI:
     def __init__(self, username: str, password: str):
         self.__credentials = {"username": username, "password": password}
         self.__session = None
+        self.__zwave_device_info = {}
 
     def get_session(self):
         return self.__session
@@ -126,6 +128,26 @@ class VivintAPI:
             ) as response:
                 if response.status == 200:
                     return await response.json()
+                else:
+                    response.raise_for_status()
+                    return None
+
+    async def get_zwave_details(self, manufacturer_id, product_id, product_type_id):
+        """Gets the zwave details by looking up the details on the openzwave device database."""
+        zwave_lookup = f"{manufacturer_id}:{product_id}:{product_type_id}"
+        device_info = self.__zwave_device_info.get(zwave_lookup)
+        if device_info is not None:
+            return device_info
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                url=f"http://openzwave.net/device-database/{manufacturer_id}:{product_id}:{product_type_id}"
+            ) as response:
+                if response.status == 200:
+                    text = await response.text()
+                    d = re.search("<title>(.*)</title>", text, re.IGNORECASE)
+                    result = self.__zwave_device_info[zwave_lookup] = d[1].split(" - ")
+                    return result
                 else:
                     response.raise_for_status()
                     return None

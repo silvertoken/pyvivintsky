@@ -1,3 +1,5 @@
+import asyncio
+import concurrent.futures
 from typing import Any, Dict
 
 
@@ -26,6 +28,8 @@ class VivintDevice(object):
         self.__device = device
         self.__root = root
         self._callback = None
+        self._manufacturer = None
+        self._model = None
 
     def get_root(self) -> object:
         """ Return the root device this is attached too."""
@@ -41,6 +45,16 @@ class VivintDevice(object):
         return str(self.__device.get("_id"))
 
     @property
+    def name(self) -> str:
+        """Return the name for this device."""
+        return self.__device.get("n")
+
+    @property
+    def device_type(self) -> str:
+        """Return the device type for this device."""
+        return self.__device["t"]
+
+    @property
     def serial_number(self) -> str:
         """Return the serial number for this device."""
         # wireless sensors and keyfobs
@@ -53,24 +67,18 @@ class VivintDevice(object):
         return f"{self.__device.get(u'panid')}-{serial_number or panel_mac or camera_mac or self.id}"
 
     @property
-    def name(self) -> str:
-        return self.__device.get("n")
+    def manufacturer(self):
+        """Return the manufacturer for this device."""
+        if not self._manufacturer and self.get_device().get("zpd"):
+            self.get_zwave_details()
+        return self._manufacturer
 
     @property
-    def device_type(self) -> str:
-        return self.__device["t"]
-
-    @property
-    def battery_level(self) -> int:
-        """Return the battery level of this device, if any."""
-        battery_level = self.__device.get("bl")
-        low_battery = self.__device.get("lb")
-        if battery_level is None and low_battery is None:
-            return None
-        elif battery_level is not None:
-            return battery_level
-        else:
-            return 0 if low_battery else 100
+    def model(self):
+        """Return the model for this device."""
+        if not self._model and self.get_device().get("zpd"):
+            self.get_zwave_details()
+        return self._model
 
     @property
     def software_version(self) -> str:
@@ -93,6 +101,18 @@ class VivintDevice(object):
             or sensor_firmware_version
         )
 
+    @property
+    def battery_level(self) -> int:
+        """Return the battery level of this device, if any."""
+        battery_level = self.__device.get("bl")
+        low_battery = self.__device.get("lb")
+        if battery_level is None and low_battery is None:
+            return None
+        elif battery_level is not None:
+            return battery_level
+        else:
+            return 0 if low_battery else 100
+
     def set_device(self, device) -> None:
         self.__device = device
 
@@ -103,3 +123,22 @@ class VivintDevice(object):
     def callback(self) -> None:
         if self._callback is not None:
             self._callback()
+
+    def get_zwave_details(self):
+        if self.get_device().get("zpd") is None:
+            return None
+
+        pool = concurrent.futures.ThreadPoolExecutor()
+        result = pool.submit(asyncio.run, self.get_zwave_details_async()).result()
+        return result
+
+    async def get_zwave_details_async(self):
+        panel = self.get_root()
+        manufacturer_id = f"{self.get_device().get('manid'):04x}"
+        product_id = f"{self.get_device().get('prid'):04x}"
+        product_type_id = f"{self.get_device().get('prtid'):04x}"
+        result = await panel.get_api().get_zwave_details(
+            manufacturer_id, product_id, product_type_id
+        )
+        [self._manufacturer, self._model] = result
+        return result

@@ -68,6 +68,17 @@ class VivintWirelessSensor(VivintDevice):
         def _missing_(cls, value):
             return cls.OTHER
 
+    NON_VIVINT = [
+        EquipmentCode.EXISTING_CO,
+        EquipmentCode.EXISTING_DOOR_WINDOW_CONTACT,
+        EquipmentCode.EXISTING_FLOOD_TEMP,
+        EquipmentCode.EXISTING_GLASS_BREAK,
+        EquipmentCode.EXISTING_HEAT,
+        EquipmentCode.EXISTING_MOTION_DETECTOR,
+        EquipmentCode.EXISTING_SMOKE,
+        EquipmentCode.OTHER,
+    ]
+
     class EquipmentType(Enum):
         CONTACT = 1
         EMERGENCY = 11
@@ -128,6 +139,18 @@ class VivintWirelessSensor(VivintDevice):
     def sensor_type(self):
         """Return the sensor type of this sensor."""
         return self.SensorType(self.get_device().get("set"))
+
+    @property
+    def manufacturer(self):
+        """Return the manufacturer for this device."""
+        if self.equipment_code in self.NON_VIVINT:
+            return "Other"
+        return "Vivint"
+
+    @property
+    def model(self):
+        """Return the model for this device."""
+        return self.equipment_code.name
 
     def update_device(self, updates):
         super().update_device(updates)
