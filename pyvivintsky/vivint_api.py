@@ -48,7 +48,8 @@ class VivintAPI:
         cookie = dict(s=self.__session.value)
         async with aiohttp.ClientSession(cookies=cookie) as session:
             async with session.get(
-                url=f"{VIVINT_API_ENDPOINT}systems/{panel_id}"
+                url=f"{VIVINT_API_ENDPOINT}systems/{panel_id}",
+                headers={"Accept-Encoding": "application/json"},
             ) as response:
                 if response.status == 200:
                     return await response.json()
