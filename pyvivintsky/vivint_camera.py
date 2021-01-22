@@ -1,4 +1,9 @@
+import logging
+
 from pyvivintsky.vivint_device import VivintDevice
+
+logger = logging.getLogger(__name__)
+
 
 # Some Vivint supported cameras may be connected directly to your local network
 # and the Vivint API reports these as having direct access availiable (cda).
@@ -41,3 +46,10 @@ class VivintCamera(VivintDevice):
         credentials = await self.get_root().get_panel_credentials()
         url = self.get_device()[f"c{'i' if internal else 'e'}u{'' if hd else 's'}"][0]
         return f"{url[:7]}{credentials[u'n']}:{credentials[u'pswd']}@{url[7:]}"
+
+    def update_device(self, updates):
+        super().update_device(updates)
+        if updates.get("ctd"):
+            logger.debug(f"{self.name} thumbnail last updated at {updates.get('ctd')}")
+        else:
+            logger.debug(f"{self.name} updated")

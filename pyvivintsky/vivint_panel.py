@@ -36,6 +36,7 @@ class VivintPanel(VivintDevice):
         self.__child_devices = self.__init_devices()
         self.__credentials = None
         self._manufacturer = "Vivint"
+        self._callback = None
 
     def __init_devices(self):
         """
