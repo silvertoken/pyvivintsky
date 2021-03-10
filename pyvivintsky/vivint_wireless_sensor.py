@@ -10,6 +10,8 @@ class VivintWirelessSensor(VivintDevice):
     """Generic Wireless Sensor."""
 
     class EquipmentCode(Enum):
+        APOLLO_COMBO_CO = 1422
+        APOLLO_COMBO_SMOKE = 1322
         CARBON_MONOXIDE_DETECTOR_345_MHZ = 1254
         CO1_CO = 860
         CO1_CO_CANADA = 859
@@ -85,8 +87,8 @@ class VivintWirelessSensor(VivintDevice):
         FREEZE = 6
         MOTION = 2
         TEMPERATURE = 10
-        UNKNOWN = 0
         WATER = 8
+        UNKNOWN = 0
 
         @classmethod
         def _missing_(cls, value):

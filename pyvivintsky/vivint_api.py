@@ -142,7 +142,7 @@ class VivintAPI:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                url=f"http://openzwave.net/device-database/{manufacturer_id}:{product_id}:{product_type_id}"
+                url=f"http://openzwave.net/device-database/{zwave_lookup}"
             ) as response:
                 if response.status == 200:
                     text = await response.text()
