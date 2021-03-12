@@ -39,15 +39,15 @@ and closing.
 
 This is the root device and all child devices are attached to it. Looking at the API its possible for an account to have more than one panel and this makes attempts to handle that.
 
-| Feature      |              Status |
-| :----------- | ------------------: |
-| Armed State  |         In Progress |
-| Update State | Not Implemented Yet |
-| PubNub       | Not Implemented Yet |
+| Feature      |  Status |
+| :----------- | ------: |
+| Armed State  | Working |
+| Update State | Working |
+| PubNub       | Working |
 
 ### Wireless Sensors
 
-These are any device that remotely connect to the sytem via wifi. This includes door sensors, break glass, and motion detectors.
+Devices that remotely connect to the sytem via 345 MHz wireless frequency. This includes door sensors, glass breaks, and motion detectors.
 
 | Feature |  Status |
 | :------ | ------: |
@@ -65,8 +65,22 @@ I don't own one of these yet but there is enough information on the other sites 
 
 ### Door Locks
 
-I don't own any of these but there is enough information on the other sites I think to implement the features.
+Door locks that connect to the system via Z-Wave
 
-| Feature | Status |
-| :------ | -----: |
-|         |        |
+| Feature     |  Status |
+| :---------- | ------: |
+| Name        | Working |
+| State       | Working |
+| Lock/Unlock | Working |
+| PubNub      | Working |
+
+### Garage Doors
+
+Garage doors that connect to the system via Z-Wave
+
+| Feature    |  Status |
+| :--------- | ------: |
+| Name       | Working |
+| State      | Working |
+| Open/Close | Working |
+| PubNub     | Working |

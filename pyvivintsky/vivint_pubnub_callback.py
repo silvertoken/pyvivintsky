@@ -1,5 +1,9 @@
+import logging
+
 from pubnub.callbacks import SubscribeCallback
 from pubnub.enums import PNOperationType, PNStatusCategory
+
+logger = logging.getLogger(__name__)
 
 
 class VivintPubNubCallback(SubscribeCallback):
@@ -31,13 +35,13 @@ class VivintPubNubCallback(SubscribeCallback):
                 # This usually occurs if subscribe temporarily fails but reconnects. This means
                 # there was an error but there is no longer any issue
             elif status.category == PNStatusCategory.PNDisconnectedCategory:
-                print("Disconnect Event")
+                logger.debug("Disconnect Event")
                 # self.__disconnected()
                 # pass
                 # This is the expected category for an unsubscribe. This means there
                 # was no error in unsubscribing from everything
             elif status.category == PNStatusCategory.PNUnexpectedDisconnectCategory:
-                print("PNUnexpectedDisconnectCategory")
+                logger.debug("PNUnexpectedDisconnectCategory")
                 pass
                 # This is usually an issue with the internet connection, this is an error, handle
                 # appropriately retry will be called automatically
@@ -51,10 +55,10 @@ class VivintPubNubCallback(SubscribeCallback):
                 It insteads fires and acknowledgement category
                 """
                 if status.operation == PNOperationType.PNUnsubscribeOperation:
-                    # print(status.is_error())
+                    # logger.debug(status.is_error())
                     self.__disconnected()
             else:
-                print("Category: " + str(status.category))
+                logger.debug("Category: " + str(status.category))
                 # This is usually an issue with the internet connection, this is an error, handle appropriately
                 # retry will be called automatically
         elif status.operation == PNOperationType.PNHeartbeatOperation:
@@ -62,30 +66,29 @@ class VivintPubNubCallback(SubscribeCallback):
             # For more information on how to configure heartbeat notifications through the status
             # PNObjectEventListener callback, consult http://www.pubnub.com/docs/python/api-reference-configuration#configuration
             if status.is_error():
-                print("Heartbeat Error")
+                logger.debug("Heartbeat Error")
                 pass
                 # There was an error with the heartbeat operation, handle here
             else:
                 pass
                 # Heartbeat operation was successful
         else:
-            print("Unknown Status: " + str(status.operation))
+            logger.debug("Unknown Status: " + str(status.operation))
             pass
             # Encountered unknown status type
 
     def presence(self, pubnub, presence):
-        # print("Presence Event!")
-        # print(presence)
+        # logger.debug("Presence Event!")
+        # logger.debug(presence)
         pass  # handle incoming presence data
 
     def message(self, pubnub, message):
         # handle incoming messages
-        # print("message")
-        # print(message.message)
+        # logger.debug("message")
+        # logger.debug(message.message)
         self.__handler(message.message)
 
     def signal(self, pubnub, signal):
-        # print("signal")
-        # print(signal.message)
+        # logger.debug("signal")
+        # logger.debug(signal.message)
         pass  # handle incoming signals
-
