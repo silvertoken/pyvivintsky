@@ -1,16 +1,23 @@
 import asyncio
-from pyvivintsky.vivint_device import VivintDevice
-from pyvivintsky.vivint_api import VivintAPI
-from pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
-from pyvivintsky.vivint_unknown_device import VivintUnknownDevice
-
+from homeauto.api_vivint.pyvivintsky.vivint_device import VivintDevice
+from homeauto.api_vivint.pyvivintsky.vivint_api import VivintAPI
+from homeauto.api_vivint.pyvivintsky.vivint_wireless_sensor import VivintWirelessSensor
+from homeauto.api_vivint.pyvivintsky.vivint_door_lock import VivintDoorLock
+from homeauto.api_vivint.pyvivintsky.vivint_unknown_device import VivintUnknownDevice
+from homeauto.house import register_security_event
+import logging
+# This retrieves a Python logging instance (or creates it)
+logger = logging.getLogger(__name__)
 
 class VivintPanel(VivintDevice):
     """
     Represents the main Vivint panel device
     """
 
-    ARM_STATES = {0: "disarmed", 3: "armed_stay", 4: "armed_away"}
+    """
+    states 1 and 2 come from panels
+    """
+    ARM_STATES = {0: "disarmed", 1: "armed_away", 2: "armed_stay", 3: "armed_stay", 4: "armed_away"}
 
     def __init__(self, vivintapi: VivintAPI, descriptor: dict, panel: dict):
         self.__vivintapi: VivintAPI = vivintapi
@@ -75,8 +82,19 @@ class VivintPanel(VivintDevice):
             for msg_device in message[u"da"][u"d"]:
                 self.update_device(str(msg_device[u"_id"]), msg_device)
 
+    def handle_armed_message(self, message):
+        logger.debug(message[u"da"][u"seca"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
+        register_security_event(message[u"da"][u"seca"][u"n"],self.ARM_STATES[message[u"da"][u"seca"][u"s"]])
+
+    def handle_disarmed_message(self, message):
+        logger.debug(message[u"da"][u"secd"][u"n"]+" set system "+self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
+        register_security_event(message[u"da"][u"secd"][u"n"],self.ARM_STATES[message[u"da"][u"secd"][u"s"]])
+
     @staticmethod
     def get_device_class(type_string):
-        mapping = {VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor}
+        mapping = {
+            VivintDevice.DEVICE_TYPE_WIRELESS_SENSOR: VivintWirelessSensor,
+            VivintDevice.DEVICE_TYPE_DOOR_LOCK: VivintDoorLock
+        }
         return mapping.get(type_string, VivintUnknownDevice)
 

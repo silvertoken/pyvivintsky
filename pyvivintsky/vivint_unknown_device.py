@@ -1,4 +1,4 @@
-from pyvivintsky.vivint_device import VivintDevice
+from homeauto.api_vivint.pyvivintsky.vivint_device import VivintDevice
 
 
 class VivintUnknownDevice(VivintDevice):

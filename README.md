@@ -43,11 +43,20 @@ This is the root device and all child devices are attached to it. Looking at the
 | :----------- | ------------------: |
 | Armed State  |         In Progress |
 | Update State | Not Implemented Yet |
-| PubNub       | Not Implemented Yet |
+| PubNub       | Working |
 
 ### Wireless Sensors
 
-These are any device that remotely connect to the sytem via wifi. This includes door sensors, break glass, and motion detectors.
+* Garage tilt sensors
+* Glass break sensors
+* Medical panic button
+* Motion sensor
+* Water sensor
+* Water sensor heat
+* Water sensor freeze
+* Window/Door sensors
+
+Sub class of devices sensors. They self identify as wireless. Not necessarily via wifi.
 
 | Feature |  Status |
 | :------ | ------: |
@@ -65,8 +74,40 @@ I don't own one of these yet but there is enough information on the other sites 
 
 ### Door Locks
 
-I don't own any of these but there is enough information on the other sites I think to implement the features.
+Sub class of devices sensors. My locks are on Zigbee not wifi
+
+| Feature | Status  |
+| :------ | ------: |
+| Name    | Working |
+| State   | Working |
+| PubNub  | Working |
+
+### Garage Door
+
+Remote control garage opener
 
 | Feature | Status |
 | :------ | -----: |
 |         |        |
+
+### Sensor Group
+
+Water detection and temperatures are combine it to a single additional device calld a sensor_group
+
+| Feature | Status |
+| :------ | -----: |
+|         |        |
+
+### Camera Device
+
+| Feature   | Status  |
+| :-------- | ------: |
+| Name      | Working |
+| Detection | Working |
+
+### Remote Keypads
+
+| Feature | Status |
+| :------ | -----: |
+|         |        |
+

@@ -1,11 +1,14 @@
 import asyncio
-from pyvivintsky.vivint_api import VivintAPI
-from pyvivintsky.vivint_panel import VivintPanel
+from homeauto.api_vivint.pyvivintsky.vivint_api import VivintAPI
+from homeauto.api_vivint.pyvivintsky.vivint_panel import VivintPanel
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
-
-# from pubnub.pubnub_asyncio import PubNubAsyncio
-from pyvivintsky.vivint_pubnub_callback import VivintPubNubCallback
+from homeauto.api_vivint.pyvivintsky.vivint_pubnub_callback import VivintPubNubCallback
+from homeauto.house import register_motion_event
+from homeauto.models.vivint import Device
+import logging
+# This retrieves a Python logging instance (or creates it)
+logger = logging.getLogger(__name__)
 
 VIVINT_SUB_KEY = "sub-c-6fb03d68-6a78-11e2-ae8f-12313f022c90"
 
@@ -27,21 +30,33 @@ class VivintSky:
         self.__pubnub_config.ssl = True
         self.__pubnub_config.subscribe_key = VIVINT_SUB_KEY
 
+    def get_session(self):
+        return self.__vivint_api.get_session()
+
+    def session_valid(self):
+        return self.__vivint_api.session_valid()
+
     async def login(self):
         if await self.__vivint_api.login():
             self.__auth_data = await self.__vivint_api.get_authorized_user()
-            print("Logged into VivintSky API")
+            logger.debug("Logged into VivintSky API")
             return True
         else:
             raise ("Failed to authenticate to Vivint Sky")
             return False
 
-    async def connect(self):
+    async def connect_panel(self):
         """
         Connect to Vivint Sky and init devices
         """
-        await self.login()
+#        await self.login()
         self.__panels = await self.___init_panels()
+
+    async def connect_pubnub(self):
+        """
+        Connect to Vivint Sky and init devices
+        """
+#        await self.login()
         self.__init_pubnub()
 
     async def ___init_panels(self):
@@ -68,14 +83,37 @@ class VivintSky:
         ).execute()
 
     def __handle_pubnub_message(self, message):
-        if u"da" in message.keys():
-            self.__panels[str(message[u"panid"])].handle_message(message)
+        logger.debug(message)
+        if u"panid" in message.keys():
+            if u"seca" in message[u'da'].keys():
+                self.__panels[str(message[u"panid"])].handle_armed_message(message)
+            if u"secd" in message[u'da'].keys():
+                self.__panels[str(message[u"panid"])].handle_disarmed_message(message)
+            else:
+                self.__panels[str(message[u"panid"])].handle_message(message)
+        elif u"desq" in message.keys():
+            logger.info(message)
+            self.__panels[str(message[u"desq"])].handle_message(message)
+        elif "inbox_message" in message[u"t"]:
+            try:
+                logger.debug(message[u"da"][u"me"])
+                logger.debug(message[u"da"][u"sub"])
+                if 'camera detected' in message[u"da"][u"me"]:
+                    # camera a motion detection does not include the camer id, but its name is in the sub message
+                    camera_name = message[u"da"][u"sub"].split('-')
+                    camera_name = camera_name[1].strip()
+                    register_motion_event('Vivint', Device.objects.get(name=camera_name).id)
+            except:
+                logger.error(message)
+        else:
+            logger.warning("UNKNOWN")
+            print(message)
 
     def __handle_pubnub_connected(self):
-        print("Connected to PubNub channel")
+        logger.info("Connected to PubNub channel")
 
     def __handle_pubnub_disconnected(self):
-        print("Disconnected from PubNub channel")
+        logger.info("Disconnected from PubNub channel")
         self.__pubnub.remove_listener(self.__pubnub_listener)
         self.__pubnub.stop()
 
